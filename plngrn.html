@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendataan Pelanggaran Ambalan Pandanaran Srikandi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a3a2a;
+            --primary-light: #2d6a4f;
+            --accent: #f4a261;
+            --accent-dark: #e07c3a;
+            --danger: #c1121f;
+            --danger-light: #ffccd5;
+            --warning-bg: #fff3cd;
+            --warning-border: #f4a261;
+            --bg: #f0ebe3;
+            --card-bg: #faf8f5;
+            --text: #1a1a1a;
+            --text-muted: #6b7280;
+            --border: #ddd5c8;
+            --success: #2d6a4f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 28px 24px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px; left: -40px;
+            width: 150px; height: 150px;
+            background: rgba(244,162,97,0.1);
+            border-radius: 50%;
+        }
+
+        .header-icon {
+            font-size: 2.2em;
+            margin-bottom: 6px;
+        }
+
+        .header h2 {
+            font-size: 0.85em;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6em;
+            line-height: 1.3;
+            color: var(--accent);
+        }
+
+        /* STATS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: var(--primary-light);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* WARNING */
+        .warning-section {
+            margin: 0 16px 12px;
+            background: var(--danger);
+            color: white;
+            border-radius: 14px;
+            padding: 16px;
+            display: none;
+        }
+
+        .warning-section.visible { display: block; }
+
+        .warning-title {
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .warning-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+        }
+
+        .warning-item:last-child { margin-bottom: 0; }
+        .warning-item-name { font-weight: 700; }
+        .warning-item-class { opacity: 0.8; font-size: 0.85em; }
+        .warning-badge {
+            background: white;
+            color: var(--danger);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.85em;
+        }
+
+        /* MAIN CARD */
+        .main-card {
+            margin: 0 16px 80px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 6px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.72em;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-light);
+            border-bottom-color: var(--primary-light);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active { display: block; }
+
+        /* FORM */
+        .section-title {
+            font-weight: 700;
+            font-size: 1em;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .form-group { margin-bottom: 14px; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95em;
+            background: white;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* DROPDOWN */
+        .dropdown-wrap { position: relative; }
+
+        .member-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0; right: 0;
+            background: white;
+            border: 1.5px solid var(--primary-light);
+            border-radius: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            display: none;
+        }
+
+        .member-dropdown.show { display: block; }
+
+        .dropdown-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0ede8;
+            transition: background 0.15s;
+        }
+
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover, .dropdown-item.selected { background: #f0f7f4; }
+        .dropdown-item-name { font-weight: 600; font-size: 0.9em; }
+        .dropdown-item-class { font-size: 0.78em; color: var(--text-muted); margin-top: 2px; }
+        .no-results { padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85em; }
+
+        /* BUTTONS */
+        .btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:hover { background: var(--primary-light); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--primary-light);
+            color: var(--primary-light);
+            margin-bottom: 14px;
+        }
+
+        .btn-outline:hover { background: #f0f7f4; }
+
+        .btn-sm {
+            width: auto;
+            padding: 7px 14px;
+            font-size: 0.8em;
+            border-radius: 8px;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover { background: #9d0d18; }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        .btn-accent:hover { background: var(--accent-dark); }
+
+        /* MEMBER FORM */
+        .add-member-form {
+            background: #f0f7f4;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .add-member-form.visible { display: block; }
+        .add-member-form .section-title { margin-bottom: 12px; font-size: 0.9em; }
+
+        /* MEMBER LIST */
+        .member-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.2s;
+        }
+
+        .member-card:hover { border-color: var(--primary-light); }
+        .member-card-name { font-weight: 700; font-size: 0.9em; }
+        .member-card-class { font-size: 0.78em; color: var(--text-muted); margin-top: 2px; }
+
+        /* VIOLATION LIST */
+        .violation-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .violation-card.danger-card { border-color: var(--danger); }
+
+        .violation-card-header {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .violation-card-name { font-weight: 700; font-size: 0.95em; }
+        .violation-card-class {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .vcount {
+            background: var(--primary-light);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.82em;
+            white-space: nowrap;
+        }
+
+        .vcount.danger { background: var(--danger); }
+
+        .violation-details {
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            display: none;
+        }
+
+        .violation-details.open { display: block; }
+
+        .violation-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0ede8;
+        }
+
+        .violation-entry:last-of-type { border-bottom: none; }
+        .violation-date { font-size: 0.75em; font-weight: 700; color: var(--text-muted); }
+        .violation-desc { font-size: 0.88em; margin-top: 3px; line-height: 1.5; }
+
+        .detail-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon { font-size: 3em; margin-bottom: 10px; }
+        .empty-state p { font-size: 0.9em; }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.85em;
+            font-weight: 600;
+            z-index: 999;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { background: var(--danger); }
+        .toast.success { background: var(--success); }
+
+        /* LOADING */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(240,235,227,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text { font-size: 0.85em; color: var(--text-muted); font-weight: 600; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .list-title {
+            font-size: 0.8em;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Memuat data...</div>
+</div>
+
+<div class="header">
+    <div class="header-icon">🏕️</div>
+    <h2>Sistem Pendataan Pelanggaran</h2>
+    <h1>Dewan Ambalan<br>Pandanaran Srikandi</h1>
+</div>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-number" id="statTotal">0</div>
+        <div class="stat-label">Total Pelanggaran</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" id="statAnggota">0</div>
+        <div class="stat-label">Anggota Melanggar</div>
+    </div>
+</div>
+
+<div class="warning-section" id="warningSection">
+    <div class="warning-title">⚠️ Anggota dengan 3+ Pelanggaran</div>
+    <div id="warningList"></div>
+</div>
+
+<div class="main-card">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('catat', this)">📝 Catat</button>
+        <button class="tab-btn" onclick="switchTab('anggota', this)">👥 Anggota</button>
+        <button class="tab-btn" onclick="switchTab('daftar', this)">📋 Daftar</button>
+    </div>
+
+    <!-- TAB CATAT -->
+    <div class="tab-content active" id="tab-catat">
+        <div class="section-title">📝 Catat Pelanggaran</div>
+        <div class="form-group dropdown-wrap">
+            <label>Pilih Anggota</label>
+            <input type="text" id="memberSearch" placeholder="Ketik nama anggota..." autocomplete="off">
+            <input type="hidden" id="selectedMember">
+            <div class="member-dropdown" id="memberDropdown"></div>
+        </div>
+        <div class="form-group">
+            <label>Tanggal Pelanggaran</label>
+            <input type="date" id="tanggal">
+        </div>
+        <div class="form-group">
+            <label>Deskripsi Pelanggaran</label>
+            <textarea id="deskripsi" placeholder="Jelaskan detail pelanggaran..."></textarea>
+        </div>
+        <button class="btn" id="submitBtn" onclick="submitViolation()">
+            ✅ Simpan Pelanggaran
+        </button>
+    </div>
+
+    <!-- TAB ANGGOTA -->
+    <div class="tab-content" id="tab-anggota">
+        <div class="section-title">👥 Manajemen Anggota</div>
+        <button class="btn btn-outline" onclick="toggleAddForm()">➕ Tambah Anggota Baru</button>
+
+        <div class="add-member-form" id="addMemberForm">
+            <div class="section-title">Form Anggota Baru</div>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="newName" placeholder="Masukkan nama lengkap">
+            </div>
+            <div class="form-group">
+                <label>Kelas</label>
+                <input type="text" id="newClass" placeholder="Contoh: XII IPA 1">
+            </div>
+            <button class="btn btn-accent" onclick="addAnggota()">💾 Simpan Anggota</button>
+        </div>
+
+        <div class="list-title" id="anggotaCount"></div>
+        <div id="anggotaList"></div>
+    </div>
+
+    <!-- TAB DAFTAR -->
+    <div class="tab-content" id="tab-daftar">
+        <div class="section-title">📋 Daftar Pelanggaran</div>
+        <div id="pelanggaranList"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwcc9Xx9j7YgvJfRGj0xUggByc5e6sHYZHiX8FOzvWJbDfRGot0UwGRCfK_ZHWUQaxo/exec';
+
+    let allAnggota = [];
+    let allPelanggaran = [];
+
+    // ===== API =====
+    async function apiCall(params) {
+        const url = new URL(API_URL);
+        Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+        const res = await fetch(url.toString());
+        return res.json();
+    }
+
+    // ===== INIT =====
+    async function init() {
+        try {
+            const [resA, resP] = await Promise.all([
+                apiCall({ action: 'getAnggota' }),
+                apiCall({ action: 'getPelanggaran' })
+            ]);
+            allAnggota = resA.data || [];
+            allPelanggaran = resP.data || [];
+            renderAll();
+        } catch (e) {
+            showToast('Gagal memuat data. Cek koneksi!', 'error');
+        }
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+
+    // ===== RENDER =====
+    function renderAll() {
+        renderStats();
+        renderWarning();
+        renderAnggotaList();
+        renderPelanggaranList();
+        setupSearch();
+    }
+
+    function renderStats() {
+        const grouped = groupPelanggaran();
+        document.getElementById('statTotal').textContent = allPelanggaran.length;
+        document.getElementById('statAnggota').textContent = Object.keys(grouped).length;
+    }
+
+    function groupPelanggaran() {
+        const grouped = {};
+        allPelanggaran.forEach(p => {
+            const key = `${p.nama}|${p.kelas}`;
+            if (!grouped[key]) grouped[key] = { nama: p.nama, kelas: p.kelas, violations: [] };
+            grouped[key].violations.push(p);
+        });
+        return grouped;
+    }
+
+    function renderWarning() {
+        const grouped = groupPelanggaran();
+        const warnings = Object.values(grouped).filter(m => m.violations.length >= 3)
+            .sort((a, b) => b.violations.length - a.violations.length);
+
+        const section = document.getElementById('warningSection');
+        const list = document.getElementById('warningList');
+
+        if (warnings.length === 0) {
+            section.classList.remove('visible');
+            return;
+        }
+
+        section.classList.add('visible');
+        list.innerHTML = warnings.map(m => `
+            <div class="warning-item">
+                <div>
+                    <div class="warning-item-name">${m.nama}</div>
+                    <div class="warning-item-class">${m.kelas}</div>
+                </div>
+                <div class="warning-badge">${m.violations.length}x</div>
+            </div>
+        `).join('');
+    }
+
+    function renderAnggotaList() {
+        const container = document.getElementById('anggotaList');
+        const countEl = document.getElementById('anggotaCount');
+
+        if (allAnggota.length === 0) {
+            countEl.textContent = '';
+            container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👤</div><p>Belum ada anggota terdaftar</p></div>`;
+            return;
+        }
+
+        countEl.textContent = `Semua Anggota (${allAnggota.length})`;
+        container.innerHTML = allAnggota.map((m, i) => `
+            <div class="member-card">
+                <div>
+                    <div class="member-card-name">${m.nama}</div>
+                    <div class="member-card-class">${m.kelas}</div>
+                </div>
+                <button class="btn btn-sm btn-danger" onclick="deleteAnggota(${i})">Hapus</button>
+            </div>
+        `).join('');
+    }
+
+    function renderPelanggaranList() {
+        const container = document.getElementById('pelanggaranList');
+        const grouped = groupPelanggaran();
+        const sorted = Object.values(grouped).sort((a, b) => b.violations.length - a.violations.length);
+
+        if (sorted.length === 0) {
+            container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><p>Belum ada data pelanggaran</p></div>`;
+            return;
+        }
+
+        container.innerHTML = sorted.map(m => {
+            const key = `${m.nama}|${m.kelas}`.replace(/[^a-zA-Z0-9]/g, '_');
+            const isWarning = m.violations.length >= 3;
+            return `
+            <div class="violation-card ${isWarning ? 'danger-card' : ''}">
+                <div class="violation-card-header" onclick="toggleDetail('${key}')">
+                    <div>
+                        <div class="violation-card-name">${m.nama}</div>
+                        <div class="violation-card-class">${m.kelas}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        ${isWarning ? '<span>⚠️</span>' : ''}
+                        <div class="vcount ${isWarning ? 'danger' : ''}">${m.violations.length}x</div>
+                    </div>
+                </div>
+                <div class="violation-details" id="detail-${key}">
+                    ${m.violations.map(v => `
+                        <div class="violation-entry">
+                            <div class="violation-date">📅 ${formatDate(v.tanggal)}</div>
+                            <div class="violation-desc">${v.deskripsi}</div>
+                        </div>
+                    `).join('')}
+                    <div class="detail-actions">
+                        <button class="btn btn-sm btn-danger" onclick="deleteAllPelanggaran('${m.nama}', '${m.kelas}')">🗑️ Hapus Semua</button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ===== SEARCH =====
+    function setupSearch() {
+        const input = document.getElementById('memberSearch');
+        const dropdown = document.getElementById('memberDropdown');
+        const hidden = document.getElementById('selectedMember');
+        let selIdx = -1;
+
+        input.addEventListener('input', () => {
+            const q = input.value.toLowerCase().trim();
+            hidden.value = '';
+            if (!q) { dropdown.classList.remove('show'); return; }
+
+            const filtered = allAnggota.filter(m =>
+                m.nama.toLowerCase().includes(q) || m.kelas.toLowerCase().includes(q)
+            );
+
+            if (filtered.length === 0) {
+                dropdown.innerHTML = '<div class="no-results">Anggota tidak ditemukan</div>';
+            } else {
+                dropdown.innerHTML = filtered.map((m, i) => `
+                    <div class="dropdown-item" data-key="${m.nama}|${m.kelas}">
+                        <div class="dropdown-item-name">${m.nama}</div>
+                        <div class="dropdown-item-class">${m.kelas}</div>
+                    </div>
+                `).join('');
+                dropdown.querySelectorAll('.dropdown-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const key = el.getAttribute('data-key');
+                        const [nama, kelas] = key.split('|');
+                        input.value = `${nama} — ${kelas}`;
+                        hidden.value = key;
+                        dropdown.classList.remove('show');
+                    });
+                });
+            }
+            dropdown.classList.add('show');
+            selIdx = -1;
+        });
+
+        input.addEventListener('keydown', e => {
+            const items = dropdown.querySelectorAll('.dropdown-item');
+            if (e.key === 'ArrowDown') { e.preventDefault(); selIdx = Math.min(selIdx + 1, items.length - 1); highlight(items); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); selIdx = Math.max(selIdx - 1, -1); highlight(items); }
+            else if (e.key === 'Enter' && selIdx >= 0) { e.preventDefault(); items[selIdx].click(); }
+            else if (e.key === 'Escape') dropdown.classList.remove('show');
+        });
+
+        function highlight(items) {
+            items.forEach((el, i) => el.classList.toggle('selected', i === selIdx));
+        }
+
+        document.addEventListener('click', e => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove('show');
+        });
+    }
+
+    // ===== ACTIONS =====
+    async function submitViolation() {
+        const member = document.getElementById('selectedMember').value;
+        const tanggal = document.getElementById('tanggal').value;
+        const deskripsi = document.getElementById('deskripsi').value.trim();
+
+        if (!member) return showToast('Pilih anggota terlebih dahulu!', 'error');
+        if (!tanggal) return showToast('Pilih tanggal pelanggaran!', 'error');
+        if (!deskripsi) return showToast('Isi deskripsi pelanggaran!', 'error');
+
+        const [nama, kelas] = member.split('|');
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Menyimpan...';
+
+        try {
+            const res = await apiCall({ action: 'addPelanggaran', nama, kelas, tanggal, deskripsi });
+            if (res.success) {
+                allPelanggaran.push({ nama, kelas, tanggal, deskripsi });
+                renderAll();
+                document.getElementById('memberSearch').value = '';
+                document.getElementById('selectedMember').value = '';
+                document.getElementById('tanggal').value = '';
+                document.getElementById('deskripsi').value = '';
+                showToast('Pelanggaran berhasil dicatat!', 'success');
+            } else {
+                showToast('Gagal menyimpan: ' + res.message, 'error');
+            }
+        } catch (e) {
+            showToast('Gagal menyimpan. Cek koneksi!', 'error');
+        }
+
+        btn.disabled = false;
+        btn.textContent = '✅ Simpan Pelanggaran';
+    }
+
+    async function addAnggota() {
+        const nama = document.getElementById('newName').value.trim();
+        const kelas = document.getElementById('newClass').value.trim();
+        if (!nama || !kelas) return showToast('Isi nama dan kelas!', 'error');
+
+        const exists = allAnggota.some(m => m.nama === nama && m.kelas === kelas);
+        if (exists) return showToast('Anggota sudah terdaftar!', 'error');
+
+        try {
+            const res = await apiCall({ action: 'addAnggota', nama, kelas });
+            if (res.success) {
+                allAnggota.push({ nama, kelas });
+                allAnggota.sort((a, b) => a.nama.localeCompare(b.nama));
+                renderAnggotaList();
+                setupSearch();
+                document.getElementById('newName').value = '';
+                document.getElementById('newClass').value = '';
+                toggleAddForm();
+                showToast('Anggota berhasil ditambahkan!', 'success');
+            } else {
+                showToast(res.message, 'error');
+            }
+        } catch (e) {
+            showToast('Gagal menyimpan. Cek koneksi!', 'error');
+        }
+    }
+
+    async function deleteAnggota(index) {
+        const m = allAnggota[index];
+        if (!confirm(`Hapus ${m.nama} dari daftar anggota?`)) return;
+
+        try {
+            await apiCall({ action: 'deleteAnggota', nama: m.nama, kelas: m.kelas });
+            await apiCall({ action: 'deletePelanggaran', nama: m.nama, kelas: m.kelas });
+            allAnggota.splice(index, 1);
+            allPelanggaran = allPelanggaran.filter(p => !(p.nama === m.nama && p.kelas === m.kelas));
+            renderAll();
+            showToast('Anggota dihapus!', 'success');
+        } catch (e) {
+            showToast('Gagal menghapus. Cek koneksi!', 'error');
+        }
+    }
+
+    async function deleteAllPelanggaran(nama, kelas) {
+        if (!confirm(`Hapus semua pelanggaran ${nama}?`)) return;
+        try {
+            await apiCall({ action: 'deletePelanggaran', nama, kelas });
+            allPelanggaran = allPelanggaran.filter(p => !(p.nama === nama && p.kelas === kelas));
+            renderAll();
+            showToast('Data pelanggaran dihapus!', 'success');
+        } catch (e) {
+            showToast('Gagal menghapus. Cek koneksi!', 'error');
+        }
+    }
+
+    // ===== UI HELPERS =====
+    function switchTab(name, el) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById(`tab-${name}`).classList.add('active');
+    }
+
+    function toggleAddForm() {
+        document.getElementById('addMemberForm').classList.toggle('visible');
+    }
+
+    function toggleDetail(key) {
+        const el = document.getElementById(`detail-${key}`);
+        el.classList.toggle('open');
+    }
+
+    function formatDate(d) {
+        if (!d) return '-';
+        const date = new Date(d);
+        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    let toastTimer;
+    function showToast(msg, type = '') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `toast ${type} show`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Set today's date as default
+    document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+
+    init();
+</script>
+</body>
+</html>
